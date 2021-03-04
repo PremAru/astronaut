@@ -2,7 +2,6 @@ package com.space.astronaut.astronautlist
 
 import com.space.astronaut.model.Results
 
-interface AstronauntInfoClickListener {
+interface AstronautInfoClickListener {
     fun userInfoListClicked(result: Results)
-
 }

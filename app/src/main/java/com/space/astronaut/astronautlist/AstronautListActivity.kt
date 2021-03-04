@@ -41,7 +41,7 @@ class AstronautListActivity : AppCompatActivity() {
         astronautListViewModel = ViewModelProvider(this, viewModelProviderFactory)
             .get(AstronautListViewModel::class.java)
 
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         binding.viewModel = astronautListViewModel
 
         setRecyclerView()
@@ -67,7 +67,7 @@ class AstronautListActivity : AppCompatActivity() {
         reposListRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = astronautInfoAdapter
-            astronautInfoAdapter.setClickListener(object : AstronauntInfoClickListener {
+            astronautInfoAdapter.setClickListener(object : AstronautInfoClickListener {
                 override fun userInfoListClicked(result: Results) {
                     val intent = Intent(
                         this@AstronautListActivity,

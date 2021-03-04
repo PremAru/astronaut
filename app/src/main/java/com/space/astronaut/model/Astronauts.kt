@@ -6,6 +6,8 @@ import java.io.Serializable
 data class Astronauts(
     @SerializedName("count")
     val count: Int,
+
     @SerializedName("results")
     var results: List<Results>
+
 ) : Serializable

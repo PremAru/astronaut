@@ -15,7 +15,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class AstronautListViewModel @Inject constructor(private var userInfoService: AstronautService) :
+class AstronautListViewModel @Inject constructor(private var astronautService: AstronautService) :
     ViewModel() {
 
     private val astronautInfoData = MutableLiveData<Resource<Astronauts>>()
@@ -24,7 +24,7 @@ class AstronautListViewModel @Inject constructor(private var userInfoService: As
 
     fun fetchAstronautList() {
         progressBar.value = View.VISIBLE
-        userInfoService.getAstronautsList(JSON)
+        astronautService.getAstronautsList(JSON)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<Astronauts>() {

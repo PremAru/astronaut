@@ -7,9 +7,9 @@ import com.squareup.picasso.BuildConfig
 import timber.log.Timber
 
 class AstronautApplication : Application() {
-    val appComponent: AppComponent by lazy { initalizeAppComponent() }
+    val appComponent: AppComponent by lazy { initializeAppComponent() }
 
-    private fun initalizeAppComponent(): AppComponent {
+    private fun initializeAppComponent(): AppComponent {
         return DaggerAppComponent.factory().create(applicationContext)
     }
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.space.astronaut.model.AstronautDetails
-import com.space.astronaut.model.Astronauts
 import com.space.astronaut.service.AstronautService
 import com.space.astronaut.utils.Constants
 import com.space.astronaut.utils.Resource

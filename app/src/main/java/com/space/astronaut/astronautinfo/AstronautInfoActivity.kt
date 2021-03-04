@@ -33,9 +33,9 @@ class AstronautInfoActivity : AppCompatActivity() {
 
         astronautInfoViewModel = ViewModelProvider(this, viewModelProviderFactory)
             .get(AstronautInfoViewModel::class.java)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         binding.viewModel = astronautInfoViewModel
 
         val astronautInfo = intent.getSerializableExtra(Constants.KEY_RESULT) as Results

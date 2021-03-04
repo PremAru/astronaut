@@ -53,19 +53,21 @@ class AstronautInfoViewModelTest {
 
     @Test
     fun shouldAstronautDetailsApiReturnSuccess() {
-        val astronautDetails = createAstronoutDetailsData()
-        whenever(astronautService.getAstronautDetails(Constants.JSON, astronautId)).thenReturn(
+        val astronautDetails = createAstronautDetailsData()
+        whenever(astronautService.getAstronautDetails(astronautId, Constants.JSON)).thenReturn(
             Observable.just(
                 astronautDetails
             )
         )
+
         astronautInfoViewModel.getAstronautDetails().observeForever(observer)
         astronautInfoViewModel.getProgressBarStatus().observeForever(progressBarObserver)
 
         astronautInfoViewModel.fetchAstronautDetails(astronautId)
 
         then(verify(progressBarObserver).onChanged(View.VISIBLE))
-        verify(astronautService).getAstronautDetails(Constants.JSON, astronautId)
+        verify(astronautService).getAstronautDetails(astronautId, Constants.JSON)
+
         then(verify(progressBarObserver).onChanged(View.GONE))
         then(verify(observer).onChanged(Resource.success(astronautDetails)))
         astronautInfoViewModel.getAstronautDetails().removeObserver(observer)
@@ -74,7 +76,7 @@ class AstronautInfoViewModelTest {
     @Test
     fun shouldAstronautDetailsApiReturnError() {
         val errorMessage = "Error message"
-        whenever(astronautService.getAstronautDetails(Constants.JSON, astronautId)).thenReturn(
+        whenever(astronautService.getAstronautDetails(astronautId, Constants.JSON)).thenReturn(
             Observable.error(
                 IOException(
                     errorMessage
@@ -87,15 +89,13 @@ class AstronautInfoViewModelTest {
         astronautInfoViewModel.fetchAstronautDetails(astronautId)
 
         then(verify(progressBarObserver).onChanged(View.VISIBLE))
-        verify(astronautService).getAstronautDetails(Constants.JSON, astronautId)
+        verify(astronautService).getAstronautDetails(astronautId, Constants.JSON)
         then(verify(progressBarObserver).onChanged(View.GONE))
-        then(verify(observer).onChanged(Resource.loading(null)))
         then(verify(observer).onChanged(Resource.error(errorMessage, null)))
         astronautInfoViewModel.getAstronautDetails().removeObserver(observer)
     }
 
-    private fun createAstronoutDetailsData(): AstronautDetails {
-        val astronautDetails = AstronautDetails(astronautDOB, bio)
-        return astronautDetails
+    private fun createAstronautDetailsData(): AstronautDetails {
+        return AstronautDetails(astronautDOB, bio)
     }
 }

@@ -15,7 +15,7 @@ class AstronautInfoAdapter @Inject constructor(private val picasso: Picasso) :
     RecyclerView.Adapter<AstronautInfoAdapter.RepositoryViewHolder>() {
     private var astronautInfoList: MutableList<Results> = mutableListOf()
 
-    var userInfoListClickListener: AstronauntInfoClickListener? = null
+    var userInfoListClickListener: AstronautInfoClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepositoryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -60,9 +60,8 @@ class AstronautInfoAdapter @Inject constructor(private val picasso: Picasso) :
     }
 
 
-    fun setClickListener(listener: AstronauntInfoClickListener) {
+    fun setClickListener(listener: AstronautInfoClickListener) {
         userInfoListClickListener = listener
     }
-
 
 }

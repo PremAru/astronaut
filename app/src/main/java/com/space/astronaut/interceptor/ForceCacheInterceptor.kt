@@ -8,7 +8,7 @@ import okhttp3.Response
 import javax.inject.Inject
 
 class ForceCacheInterceptor @Inject constructor(context: Context): Interceptor {
-    val application = context
+    private val application = context
 
     override fun intercept(chain: Interceptor.Chain): Response {
         var builder = chain.request().newBuilder()

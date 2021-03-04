@@ -104,7 +104,7 @@ class AstronautListViewModelTest {
 
     private fun createAstronautData(): Astronauts {
         /*
-        The results are explicity set to have the name starting with 'A' to be the end so we
+        The results are explicitly set to have the name starting with 'A' to be the end so we
         could test sorting
          */
         val resultsList = arrayListOf<Results>(
@@ -121,8 +121,7 @@ class AstronautListViewModelTest {
                 profile_image_thumbnail = "https://spacelaunchnow-prod-east.nyc3.cdn.digitaloceanspaces.com/media/default/cache/b5/9b/b59bb16a31087708ffb212d3e6938946.jpg"
             )
         )
-        val astronoutData = Astronauts(1, resultsList)
-        return astronoutData
+        return Astronauts(1, resultsList)
     }
 
 }
