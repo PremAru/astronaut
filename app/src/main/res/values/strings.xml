@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Astronaut</string>
+    <string name="name">Name</string>
+    <string name="nationality">Nationality</string>
+    <string name="bio">Bio</string>
+    <string name="dob">Date of birth</string>
+    <string name="error_title">Error</string>
+    <string name="ok_button">Ok</string>
 </resources>
