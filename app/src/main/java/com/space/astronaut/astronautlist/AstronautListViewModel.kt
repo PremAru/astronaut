@@ -1,5 +1,6 @@
 package com.space.astronaut.astronautlist
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,11 +17,13 @@ import javax.inject.Inject
 
 class AstronautListViewModel @Inject constructor(private var userInfoService: AstronautService) :
     ViewModel() {
+
     private val astronautInfoData = MutableLiveData<Resource<Astronauts>>()
     lateinit var astronautList: Astronauts
+    private val progressBar = MutableLiveData<Int>()
 
     fun fetchAstronautList() {
-        astronautInfoData.postValue(Resource.loading(null))
+        progressBar.value = View.VISIBLE
         userInfoService.getAstronautsList(JSON)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -31,14 +34,17 @@ class AstronautListViewModel @Inject constructor(private var userInfoService: As
 
                 override fun onNext(astronauts: Astronauts) {
                     Timber.i("Astronaut detail success response received")
-                    astronautList = astronauts;
+                    progressBar.value = View.GONE
+                    astronautList = astronauts
                     val astronauts = astronautList.results.sortedBy { results -> results.name }
                     astronautList.results = astronauts
                     astronautInfoData.postValue(Resource.success(astronautList))
+
                 }
 
                 override fun onError(e: Throwable?) {
                     Timber.e("Astronaut detail error response received $e")
+                    progressBar.value = View.GONE
                     astronautInfoData.postValue(Resource.error("${e?.localizedMessage}", null))
                 }
             })
@@ -46,6 +52,10 @@ class AstronautListViewModel @Inject constructor(private var userInfoService: As
 
     fun getAstronaut(): LiveData<Resource<Astronauts>> {
         return astronautInfoData
+    }
+
+    fun getProgressBarStatus(): LiveData<Int> {
+        return progressBar
     }
 
     fun getSortedAstronaut() {

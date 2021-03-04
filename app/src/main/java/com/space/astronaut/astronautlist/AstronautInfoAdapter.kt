@@ -61,7 +61,7 @@ class AstronautInfoAdapter @Inject constructor(private val picasso: Picasso) :
 
 
     fun setClickListener(listener: AstronauntInfoClickListener) {
-        userInfoListClickListener = listener;
+        userInfoListClickListener = listener
     }
 
 

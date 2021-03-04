@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.space.astronaut.AstronautApplication
 import com.space.astronaut.R
 import com.space.astronaut.astronautinfo.AstronautInfoActivity
+import com.space.astronaut.databinding.ActivityAstronoutListBinding
 import com.space.astronaut.model.Results
 import com.space.astronaut.utils.Constants
 import com.space.astronaut.utils.Status
@@ -27,37 +29,38 @@ class AstronautListActivity : AppCompatActivity() {
     @Inject
     internal lateinit var astronautInfoAdapter: AstronautInfoAdapter
 
+    private lateinit var binding: ActivityAstronoutListBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as AstronautApplication).appComponent.astronautListComponent().create()
             .inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_astronout_list)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_astronout_list)
+
 
         astronautListViewModel = ViewModelProvider(this, viewModelProviderFactory)
             .get(AstronautListViewModel::class.java)
+
+        binding.setLifecycleOwner(this)
+        binding.viewModel = astronautListViewModel
 
         setRecyclerView()
         astronautListViewModel.getAstronaut().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    progressBar.hide()
                     it.data?.let { astronautList ->
                         astronautInfoAdapter.setUserInfoList(
                             astronautList.results
                         )
                     }
                 }
-                Status.LOADING -> {
-                    progressBar.show()
-                }
                 Status.ERROR -> {
-                    progressBar.hide()
                     displayError(it.message.toString())
                 }
             }
         })
 
-        getAstronautInfoList();
+        getAstronautInfoList()
     }
 
     private fun setRecyclerView() {
@@ -73,7 +76,7 @@ class AstronautListActivity : AppCompatActivity() {
                     intent.putExtra(Constants.KEY_RESULT, result)
                     startActivity(intent)
                 }
-            });
+            })
         }
 
     }
@@ -84,26 +87,26 @@ class AstronautListActivity : AppCompatActivity() {
     }
 
     private fun displayError(errorMessage: String) {
-            var alertBuilder = AlertDialog.Builder(this)
-            alertBuilder.setTitle(getString(R.string.error_title))
-            alertBuilder.setMessage(errorMessage)
-            alertBuilder.setPositiveButton(getString(R.string.ok_button), null)
-            alertBuilder.show()
-        }
+        var alertBuilder = AlertDialog.Builder(this)
+        alertBuilder.setTitle(getString(R.string.error_title))
+        alertBuilder.setMessage(errorMessage)
+        alertBuilder.setPositiveButton(getString(R.string.ok_button), null)
+        alertBuilder.show()
+    }
 
-        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-            menuInflater.inflate(R.menu.my_options_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.my_options_menu, menu)
 
-            return true
-        }
+        return true
+    }
 
-        override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-            R.id.action_custom_button -> {
-                astronautListViewModel.getSortedAstronaut()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_custom_button -> {
+            astronautListViewModel.getSortedAstronaut()
+            true
         }
+        else -> super.onOptionsItemSelected(item)
+    }
 
 
 }

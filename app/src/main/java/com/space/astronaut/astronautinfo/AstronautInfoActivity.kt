@@ -33,7 +33,10 @@ class AstronautInfoActivity : AppCompatActivity() {
 
         astronautInfoViewModel = ViewModelProvider(this, viewModelProviderFactory)
             .get(AstronautInfoViewModel::class.java)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+
+        binding.setLifecycleOwner(this)
+        binding.viewModel = astronautInfoViewModel
 
         val astronautInfo = intent.getSerializableExtra(Constants.KEY_RESULT) as Results
         binding.astronautName = astronautInfo.name
@@ -46,7 +49,6 @@ class AstronautInfoActivity : AppCompatActivity() {
         astronautInfoViewModel.getAstronautDetails().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    infoProgressBar.hide()
                     it.data?.let { astronaut ->
                         dateOfBirthTextView.text =
                             astronaut.date_of_birth
@@ -54,11 +56,7 @@ class AstronautInfoActivity : AppCompatActivity() {
                             astronaut.bio
                     }
                 }
-                Status.LOADING -> {
-                    infoProgressBar.show()
-                }
                 Status.ERROR -> {
-                    infoProgressBar.hide()
                     displayError(it.message.toString())
                 }
             }
@@ -73,7 +71,7 @@ class AstronautInfoActivity : AppCompatActivity() {
 
         if (id == android.R.id.home) {
             finish()
-            return true;
+            return true
         }
         return super.onOptionsItemSelected(item)
     }

@@ -1,10 +1,9 @@
 package com.space.astronaut.astronautlist
 
+import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.nhaarman.mockitokotlin2.then
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import com.space.astronaut.model.Astronauts
 import com.space.astronaut.model.Results
 import com.space.astronaut.service.AstronautService
@@ -40,8 +39,8 @@ class AstronautListViewModelTest {
     @Mock
     lateinit var observer: Observer<Resource<Astronauts>>
 
-
-
+    @Mock
+    lateinit var progressBarObserver: Observer<Int>
 
     @Before
     fun setUp() {
@@ -57,11 +56,14 @@ class AstronautListViewModelTest {
             )
         )
         astronautListViewModel.getAstronaut().observeForever(observer)
+        astronautListViewModel.getProgressBarStatus().observeForever(progressBarObserver)
+
 
         astronautListViewModel.fetchAstronautList()
 
+        then(verify(progressBarObserver).onChanged(View.VISIBLE))
         verify(astronautService).getAstronautsList(Constants.JSON)
-        then(verify(observer).onChanged(Resource.loading(null)))
+        then(verify(progressBarObserver).onChanged(View.GONE))
         then(verify(observer).onChanged(Resource.success(astronautData)))
         astronautListViewModel.getAstronaut().removeObserver(observer)
     }
@@ -77,10 +79,13 @@ class AstronautListViewModelTest {
             )
         )
         astronautListViewModel.getAstronaut().observeForever(observer)
+        astronautListViewModel.getProgressBarStatus().observeForever(progressBarObserver)
+
         astronautListViewModel.fetchAstronautList()
         verify(astronautService).getAstronautsList(Constants.JSON)
-        then(verify(observer).onChanged(Resource.loading(null)))
+        then(verify(progressBarObserver).onChanged(View.VISIBLE))
         then(verify(observer).onChanged(Resource.error(errorMessage, null)))
+        then(verify(progressBarObserver).onChanged(View.GONE))
         astronautListViewModel.getAstronaut().removeObserver(observer)
     }
 
@@ -88,10 +93,10 @@ class AstronautListViewModelTest {
     fun shouldSortByName() {
         val astronautData = createAstronautData()
         val expectedAstronautData = createAstronautData()
-        Collections.reverse(expectedAstronautData.results);
+        Collections.reverse(expectedAstronautData.results)
 
         astronautListViewModel.getAstronaut().observeForever(observer)
-        astronautListViewModel.astronautList = astronautData;
+        astronautListViewModel.astronautList = astronautData
 
         astronautListViewModel.getSortedAstronaut()
         then(verify(observer).onChanged(Resource.success(expectedAstronautData)))

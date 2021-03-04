@@ -14,6 +14,10 @@
         <variable
             name="astronautDetails"
             type="com.space.astronaut.model.AstronautDetails" />
+
+        <variable
+            name="viewModel"
+            type="com.space.astronaut.astronautinfo.AstronautInfoViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -86,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:visibility="visible"
+            android:visibility="@{viewModel.progressBarStatus}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

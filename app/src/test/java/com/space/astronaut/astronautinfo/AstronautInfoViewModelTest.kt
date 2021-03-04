@@ -1,5 +1,6 @@
 package com.space.astronaut.astronautinfo
 
+import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.then
@@ -14,9 +15,12 @@ import io.reactivex.rxjava3.core.Observable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.IOException
 
+@RunWith(MockitoJUnitRunner::class)
 class AstronautInfoViewModelTest {
     lateinit var astronautInfoViewModel: AstronautInfoViewModel
 
@@ -33,6 +37,9 @@ class AstronautInfoViewModelTest {
 
     @Mock
     lateinit var observer: Observer<Resource<AstronautDetails>>
+
+    @Mock
+    lateinit var progressBarObserver: Observer<Int>
 
     private val bio =
         "Franz Artur Viehböck (born August 24, 1960 in Vienna) is an Austrian electrical engineer, and was Austria's first cosmonaut. He was titulated „Austronaut“ by his country's media. He visited the Mir space station in 1991 aboard Soyuz TM-13, returning aboard Soyuz TM-12 after spending just over a week in space."
@@ -53,9 +60,13 @@ class AstronautInfoViewModelTest {
             )
         )
         astronautInfoViewModel.getAstronautDetails().observeForever(observer)
+        astronautInfoViewModel.getProgressBarStatus().observeForever(progressBarObserver)
+
         astronautInfoViewModel.fetchAstronautDetails(astronautId)
+
+        then(verify(progressBarObserver).onChanged(View.VISIBLE))
         verify(astronautService).getAstronautDetails(Constants.JSON, astronautId)
-        then(verify(observer).onChanged(Resource.loading(null)))
+        then(verify(progressBarObserver).onChanged(View.GONE))
         then(verify(observer).onChanged(Resource.success(astronautDetails)))
         astronautInfoViewModel.getAstronautDetails().removeObserver(observer)
     }
@@ -71,8 +82,13 @@ class AstronautInfoViewModelTest {
             )
         )
         astronautInfoViewModel.getAstronautDetails().observeForever(observer)
+        astronautInfoViewModel.getProgressBarStatus().observeForever(progressBarObserver)
+
         astronautInfoViewModel.fetchAstronautDetails(astronautId)
+
+        then(verify(progressBarObserver).onChanged(View.VISIBLE))
         verify(astronautService).getAstronautDetails(Constants.JSON, astronautId)
+        then(verify(progressBarObserver).onChanged(View.GONE))
         then(verify(observer).onChanged(Resource.loading(null)))
         then(verify(observer).onChanged(Resource.error(errorMessage, null)))
         astronautInfoViewModel.getAstronautDetails().removeObserver(observer)
