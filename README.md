@@ -3,13 +3,14 @@ An app that will display list of astronauts and their details
 
 # Astronaut List Screen:
 
-![alt text] https://github.com/PremAru/astronaut/blob/master/images/Astronaut_list.png
-![alt text] https://github.com/PremAru/astronaut/blob/master/images/Astronaut_list_sorted.png
+![alt text] (https://github.com/PremAru/astronaut/blob/master/images/Astronaut_list.png)
+
+![alt text] (https://github.com/PremAru/astronaut/blob/master/images/Astronaut_list_sorted.png)
 
 
 # Astronaut Detail Screen:
 
-![alt text] https://github.com/PremAru/astronaut/blob/master/images/Astronaut_detail.png
+![alt text] (https://github.com/PremAru/astronaut/blob/master/images/Astronaut_detail.png)
 
 ## Getting Started
 
