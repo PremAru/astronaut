@@ -5,7 +5,7 @@ import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.then
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.space.astronaut.model.AstronoutList
+import com.space.astronaut.model.Astronauts
 import com.space.astronaut.model.Results
 import com.space.astronaut.service.AstronautService
 import com.space.astronaut.utils.Constants
@@ -13,13 +13,13 @@ import com.space.astronaut.utils.Resource
 import com.space.astronaut.utils.RxImmediateSchedulerRule
 import io.reactivex.rxjava3.core.Observable
 import okio.IOException
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class AstronautListViewModelTest {
@@ -38,7 +38,7 @@ class AstronautListViewModelTest {
     var testSchedulerRule = RxImmediateSchedulerRule()
 
     @Mock
-    lateinit var observer: Observer<Resource<AstronoutList>>
+    lateinit var observer: Observer<Resource<Astronauts>>
 
 
 
@@ -50,62 +50,73 @@ class AstronautListViewModelTest {
 
     @Test
     fun shouldAstronautAPIReturnSuccess() {
-        val astronoutData = createAstronoutData()
-        whenever(astronautService.getAstronoutsList(Constants.JSON)).thenReturn(
+        val astronautData = createAstronautData()
+        whenever(astronautService.getAstronautsList(Constants.JSON)).thenReturn(
             Observable.just(
-                astronoutData
+                astronautData
             )
         )
-        astronautListViewModel.getAstronout().observeForever(observer)
-        astronautListViewModel.fetchAstronoutList()
-        verify(astronautService).getAstronoutsList(Constants.JSON)
+        astronautListViewModel.getAstronaut().observeForever(observer)
+
+        astronautListViewModel.fetchAstronautList()
+
+        verify(astronautService).getAstronautsList(Constants.JSON)
         then(verify(observer).onChanged(Resource.loading(null)))
-        then(verify(observer).onChanged(Resource.success(astronoutData)))
-        astronautListViewModel.getAstronout().removeObserver(observer)
+        then(verify(observer).onChanged(Resource.success(astronautData)))
+        astronautListViewModel.getAstronaut().removeObserver(observer)
     }
 
     @Test
     fun shouldAstronautAPIReturnError() {
         val errorMessage = "Error message"
-        whenever(astronautService.getAstronoutsList(Constants.JSON)).thenReturn(
+        whenever(astronautService.getAstronautsList(Constants.JSON)).thenReturn(
             Observable.error(
                 IOException(
                     errorMessage
                 )
             )
         )
-        astronautListViewModel.getAstronout().observeForever(observer)
-        astronautListViewModel.fetchAstronoutList()
-        verify(astronautService).getAstronoutsList(Constants.JSON)
+        astronautListViewModel.getAstronaut().observeForever(observer)
+        astronautListViewModel.fetchAstronautList()
+        verify(astronautService).getAstronautsList(Constants.JSON)
         then(verify(observer).onChanged(Resource.loading(null)))
         then(verify(observer).onChanged(Resource.error(errorMessage, null)))
-        astronautListViewModel.getAstronout().removeObserver(observer)
+        astronautListViewModel.getAstronaut().removeObserver(observer)
     }
 
     @Test
     fun shouldSortByName() {
-        val astronoutData = createAstronoutData()
-        astronautListViewModel.getAstronout().observeForever(observer)
-        astronautListViewModel.getSortedAstronout()
-        then(verify(observer).onChanged(Resource.success(astronoutData)))
+        val astronautData = createAstronautData()
+        val expectedAstronautData = createAstronautData()
+        Collections.reverse(expectedAstronautData.results);
+
+        astronautListViewModel.getAstronaut().observeForever(observer)
+        astronautListViewModel.astronautList = astronautData;
+
+        astronautListViewModel.getSortedAstronaut()
+        then(verify(observer).onChanged(Resource.success(expectedAstronautData)))
     }
 
-    private fun createAstronoutData(): AstronoutList {
+    private fun createAstronautData(): Astronauts {
+        /*
+        The results are explicity set to have the name starting with 'A' to be the end so we
+        could test sorting
+         */
         val resultsList = arrayListOf<Results>(
             Results(
                 id="1",
-                name = "Franz Viehböck",
+                name = "Zranz Viehböck",
                 nationality = "Austrian",
                 profile_image_thumbnail = "https://spacelaunchnow-prod-east.nyc3.cdn.digitaloceanspaces.com/media/default/cache/54/57/5457ce75acb7b188196eb442e3f17b64.jpg"
             ),
             Results(
                 id="2",
-                name = "Marcos Pontes",
-                nationality = "Brazilian",
+                name = "Aarcos Pontes",
+                nationality = "U.S.A",
                 profile_image_thumbnail = "https://spacelaunchnow-prod-east.nyc3.cdn.digitaloceanspaces.com/media/default/cache/b5/9b/b59bb16a31087708ffb212d3e6938946.jpg"
             )
         )
-        val astronoutData = AstronoutList(1, resultsList)
+        val astronoutData = Astronauts(1, resultsList)
         return astronoutData
     }
 

@@ -1,6 +1,7 @@
 package com.space.astronaut.di
 
 import android.content.Context
+import com.space.astronaut.astronautinfo.AstronautInfoComponent
 import com.space.astronaut.astronautlist.AstronautListComponent
 import dagger.BindsInstance
 import dagger.Component
@@ -16,5 +17,7 @@ interface AppComponent {
         fun create(@BindsInstance context: Context): AppComponent
     }
     fun astronautListComponent(): AstronautListComponent.Factory
+    fun astronautInfoComponent(): AstronautInfoComponent.Factory
+
 
 }

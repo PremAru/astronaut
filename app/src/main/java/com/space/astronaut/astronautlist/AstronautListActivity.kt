@@ -11,9 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.space.astronaut.AstronautApplication
 import com.space.astronaut.R
+import com.space.astronaut.astronautinfo.AstronautInfoActivity
 import com.space.astronaut.model.Results
+import com.space.astronaut.utils.Constants
 import com.space.astronaut.utils.Status
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_astronout_list.*
 import javax.inject.Inject
 
 class AstronautListActivity : AppCompatActivity() {
@@ -29,13 +31,13 @@ class AstronautListActivity : AppCompatActivity() {
         (application as AstronautApplication).appComponent.astronautListComponent().create()
             .inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_astronout_list)
 
         astronautListViewModel = ViewModelProvider(this, viewModelProviderFactory)
             .get(AstronautListViewModel::class.java)
 
         setRecyclerView()
-        astronautListViewModel.getAstronout().observe(this, Observer {
+        astronautListViewModel.getAstronaut().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     progressBar.hide()
@@ -51,7 +53,6 @@ class AstronautListActivity : AppCompatActivity() {
                 Status.ERROR -> {
                     progressBar.hide()
                     displayError(it.message.toString())
-                    // Alert view implementaion
                 }
             }
         })
@@ -65,7 +66,12 @@ class AstronautListActivity : AppCompatActivity() {
             adapter = astronautInfoAdapter
             astronautInfoAdapter.setClickListener(object : AstronauntInfoClickListener {
                 override fun userInfoListClicked(result: Results) {
-
+                    val intent = Intent(
+                        this@AstronautListActivity,
+                        AstronautInfoActivity::class.java
+                    )
+                    intent.putExtra(Constants.KEY_RESULT, result)
+                    startActivity(intent)
                 }
             });
         }
@@ -74,7 +80,7 @@ class AstronautListActivity : AppCompatActivity() {
 
 
     private fun getAstronautInfoList() {
-        astronautListViewModel.fetchAstronoutList()
+        astronautListViewModel.fetchAstronautList()
     }
 
     private fun displayError(errorMessage: String) {
@@ -93,7 +99,7 @@ class AstronautListActivity : AppCompatActivity() {
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
             R.id.action_custom_button -> {
-                astronautListViewModel.getSortedAstronout()
+                astronautListViewModel.getSortedAstronaut()
                 true
             }
             else -> super.onOptionsItemSelected(item)

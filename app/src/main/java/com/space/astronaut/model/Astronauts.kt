@@ -3,7 +3,7 @@ package com.space.astronaut.model
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class AstronoutList(
+data class Astronauts(
     @SerializedName("count")
     val count: Int,
     @SerializedName("results")

@@ -3,7 +3,7 @@ package com.space.astronaut.astronautlist
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.space.astronaut.model.AstronoutList
+import com.space.astronaut.model.Astronauts
 import com.space.astronaut.service.AstronautService
 import com.space.astronaut.utils.Constants.JSON
 import com.space.astronaut.utils.Resource
@@ -16,44 +16,40 @@ import javax.inject.Inject
 
 class AstronautListViewModel @Inject constructor(private var userInfoService: AstronautService) :
     ViewModel() {
-    private val astronoutInfoData = MutableLiveData<Resource<AstronoutList>>()
-    lateinit var astronoutInfoMain: AstronoutList
+    private val astronautInfoData = MutableLiveData<Resource<Astronauts>>()
+    lateinit var astronautList: Astronauts
 
-    fun fetchAstronoutList() {
-        astronoutInfoData.postValue(Resource.loading(null))
-        userInfoService.getAstronoutsList(JSON)
+    fun fetchAstronautList() {
+        astronautInfoData.postValue(Resource.loading(null))
+        userInfoService.getAstronautsList(JSON)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<AstronoutList>() {
+            .subscribe(object : DisposableObserver<Astronauts>() {
                 override fun onComplete() {
                     Timber.i("Astronaut detail complete block executed")
                 }
 
-                override fun onNext(astronoutList: AstronoutList) {
+                override fun onNext(astronauts: Astronauts) {
                     Timber.i("Astronaut detail success response received")
-
-                    astronoutInfoMain = astronoutList;
-                    val astronauts = astronoutInfoMain.results.sortedBy { results -> results.name }
-                    astronoutInfoMain.results = astronauts
-                    astronoutInfoData.postValue(Resource.success(astronoutInfoMain))
+                    astronautList = astronauts;
+                    val astronauts = astronautList.results.sortedBy { results -> results.name }
+                    astronautList.results = astronauts
+                    astronautInfoData.postValue(Resource.success(astronautList))
                 }
 
                 override fun onError(e: Throwable?) {
                     Timber.e("Astronaut detail error response received $e")
-                    astronoutInfoData.postValue(Resource.error("${e?.localizedMessage}", null))
+                    astronautInfoData.postValue(Resource.error("${e?.localizedMessage}", null))
                 }
             })
     }
 
-    fun getAstronout(): LiveData<Resource<AstronoutList>> {
-        return astronoutInfoData
+    fun getAstronaut(): LiveData<Resource<Astronauts>> {
+        return astronautInfoData
     }
 
-    fun getSortedAstronout() {
-        Collections.reverse(astronoutInfoMain.results)
-        astronoutInfoData.postValue(Resource.success(astronoutInfoMain))
+    fun getSortedAstronaut() {
+        Collections.reverse(astronautList.results)
+        astronautInfoData.postValue(Resource.success(astronautList))
     }
-
-
-
 }
