@@ -1,7 +1,8 @@
-package com.space.astronaut
+package com.space.astronaut.astronautlist
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.space.astronaut.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
